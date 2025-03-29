@@ -46,20 +46,20 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        register("library") {
-            id = "id.panicdev.android.library"
+        register("androidLibrary") {
+            id = "id.panicdev.library"
             implementationClass = "LibraryConventionPlugin"
         }
-        register("composeLibrary") {
-            id = "id.panicdev.android.compose.library"
-            implementationClass = "ComposeLibraryConventionPlugin"
+        register("androidLibraryCompose") {
+            id = "id.panicdev.library.compose"
+            implementationClass = "LibraryComposeConventionPlugin"
         }
         register("application") {
-            id = "id.panicdev.android.application"
+            id = "id.panicdev.application"
             implementationClass = "ApplicationConventionPlugin"
         }
         register("hilt") {
-            id = "id.panicdev.android.hilt"
+            id = "id.panicdev.hilt"
             implementationClass = "HiltConventionPlugin"
         }
     }

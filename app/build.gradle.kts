@@ -68,7 +68,12 @@ android {
 }
 
 dependencies {
-    implementation(platform(libs.androidx.compose.bom))
+    implementation(projects.core.android)
+    implementation(projects.core.ui)
+    implementation(projects.core.data)
+    implementation(projects.core.navigation)
+
+    implementation(libs.androidx.core.splashscreen)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

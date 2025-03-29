@@ -37,6 +37,13 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "GithubSearchUser"
 include(":app")
 
+include(":core:android")
+include(":core:navigation")
+include(":core:data")
+include(":core:ui")
+
+include(":feature:home")
+include(":feature:detail")
 
 check(JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
     """

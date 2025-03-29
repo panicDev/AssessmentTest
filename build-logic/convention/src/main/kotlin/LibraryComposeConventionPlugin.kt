@@ -15,19 +15,18 @@
  */
 
 import com.android.build.gradle.LibraryExtension
+import id.panicdev.configAndroid
+import id.panicdev.configCompose
+import id.panicdev.libs
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 
-class ComposeLibraryConventionPlugin : Plugin<Project> {
+class LibraryComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             val javaVersion = libs.findVersion("java").get().toString()
             val minSdkVersion = libs.findVersion("minSdk").get().toString().toInt()
             val compileSdkVersion = libs.findVersion("compileSdk").get().toString().toInt()
@@ -38,6 +37,13 @@ class ComposeLibraryConventionPlugin : Plugin<Project> {
                 apply("org.jetbrains.kotlin.plugin.compose")
                 apply("kotlinx-serialization")
             }
+
+            extensions.configure<LibraryExtension> {
+                configAndroid(this)
+            }
+
+            val extension = extensions.getByType<LibraryExtension>()
+            configCompose(extension)
 
             extensions.configure<LibraryExtension> {
                 compileSdk = compileSdkVersion
@@ -51,20 +57,6 @@ class ComposeLibraryConventionPlugin : Plugin<Project> {
                     targetCompatibility = JavaVersion.valueOf("VERSION_$javaVersion")
                 }
 
-                buildFeatures {
-                    compose = true
-                }
-            }
-
-            extensions.configure<KotlinAndroidProjectExtension> {
-                compilerOptions {
-                    jvmTarget.set(JvmTarget.fromTarget(javaVersion))
-                    freeCompilerArgs.addAll(
-                        "-opt-in=kotlin.RequiresOptIn",
-                        "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-                        "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi",
-                    )
-                }
             }
         }
     }
