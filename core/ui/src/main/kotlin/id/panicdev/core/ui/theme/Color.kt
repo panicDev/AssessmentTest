@@ -55,6 +55,8 @@ internal val Red40 = Color(0xFFBA1A1A)
 internal val Red80 = Color(0xFFFFB4AB)
 internal val Red90 = Color(0xFFFFDAD6)
 
+val StarColor = Color(0xFFEAC54E)
+
 /**
  * Light default theme color scheme
  */

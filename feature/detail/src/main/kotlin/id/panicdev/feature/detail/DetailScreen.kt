@@ -15,28 +15,50 @@
  */
 package id.panicdev.feature.detail
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import id.panicdev.feature.detail.components.DetailContent
 
 @Composable
-fun HomeDetailScreen(
-    modifier: Modifier = Modifier,
+fun DetailScreen(
     viewModel: DetailViewModel = hiltViewModel(),
-    navController: NavController = rememberNavController(),
+    onBack: () -> Unit
 ) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            "Home Screen",
-        )
-    }
+    val state = viewModel.state
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(text = state.user?.username.orEmpty())
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Outlined.ArrowBack, "Back")
+                    }
+                }
+            )
+        },
+        content = { paddingValues ->
+            DetailContent(
+                paddingValues = paddingValues,
+                user = state.user
+            )
+        }
+    )
+}
+
+@Preview
+@Composable
+fun DetailScreenPreview() {
+    DetailScreen(onBack = {})
 }

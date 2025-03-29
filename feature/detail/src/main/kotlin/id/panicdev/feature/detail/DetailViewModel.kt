@@ -15,15 +15,53 @@
  */
 package id.panicdev.feature.detail
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import id.panicdev.core.data.repository.GithubRepository
+import id.panicdev.core.data.domain.usecase.UserUseCases
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    private val repository: GithubRepository,
+    savedStateHandle: SavedStateHandle,
+    private val userUseCases: UserUseCases,
 ) : ViewModel() {
+    var state by mutableStateOf(DetailState())
+        private set
 
-    // Add your view model logic here
+    init {
+        savedStateHandle.get<String>("username")?.let { username ->
+            getUser(username = username)
+        }
+    }
+
+    private fun getUser(username: String) {
+        state = state.copy(isLoading = true, followersError = null)
+        viewModelScope.launch {
+            val user = userUseCases.getUserUseCase(username = username)
+            state = state.copy(user = user)
+            if (user != null) {
+                userUseCases.getFollowersUseCase(username = username)
+                    .onSuccess { followers ->
+                        user.followers = followers
+                        state = state.copy(user = user)
+                    }.onFailure {
+                        state = state.copy(followersError = it.message)
+                    }
+                userUseCases.getRepositoriesUseCase(username = username)
+                    .onSuccess { repos ->
+                        user.repos = repos
+                        state = state.copy(user = user)
+                    }.onFailure {
+                        state = state.copy(reposError = it.message)
+                    }
+            }
+            state = state.copy(isLoading = false)
+        }
+    }
 }

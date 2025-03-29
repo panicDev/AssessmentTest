@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package id.panicdev.core.data.local
+package id.panicdev.feature.detail
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import id.panicdev.core.data.local.entity.UserEntity
+import id.panicdev.core.data.domain.model.Repository
+import id.panicdev.core.data.domain.model.User
 
-@Database(
-    entities = [UserEntity::class],
-    version = 1,
-    exportSchema = false,
+data class DetailState(
+    val isLoading: Boolean = false,
+    val user: User? = null,
+    val followers: List<User>? = emptyList(),
+    val repos: List<Repository>? = emptyList(),
+    val followersError: String? = null,
+    val reposError: String? = null,
 )
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
-}

@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package id.panicdev.core.data.local
+package id.panicdev.core.data.remote.model
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import id.panicdev.core.data.local.entity.UserEntity
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@Database(
-    entities = [UserEntity::class],
-    version = 1,
-    exportSchema = false,
+@Serializable
+data class UserQueryResponse(
+    @SerialName("total_count")
+    val total: Int,
+    val items: List<UserResponse>,
 )
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
-}

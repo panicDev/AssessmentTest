@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package id.panicdev.core.data.local
+package id.panicdev.core.data.domain.usecase
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import id.panicdev.core.data.local.entity.UserEntity
+import id.panicdev.core.data.domain.model.Repository
+import id.panicdev.core.data.domain.repository.UserRepository
 
-@Database(
-    entities = [UserEntity::class],
-    version = 1,
-    exportSchema = false,
-)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
+class GetRepositoriesUseCase(private val userRepository: UserRepository) {
+    suspend operator fun invoke(username: String?): Result<List<Repository>> {
+        return if (username.isNullOrEmpty()) {
+            Result.failure(Exception("Username is null or empty"))
+        } else {
+            val repos = userRepository.getRepositories(username = username)
+            Result.success(repos)
+        }
+    }
 }

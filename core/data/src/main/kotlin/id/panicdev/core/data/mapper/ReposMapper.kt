@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package id.panicdev.core.data.local
+package id.panicdev.core.data.mapper
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import id.panicdev.core.data.local.entity.UserEntity
+import id.panicdev.core.data.domain.model.Repository
+import id.panicdev.core.data.remote.model.ReposResponse
 
-@Database(
-    entities = [UserEntity::class],
-    version = 1,
-    exportSchema = false,
-)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
+fun ReposResponse.toDomain(): Repository {
+    return Repository(
+        id = this.id,
+        name = this.name,
+    )
 }

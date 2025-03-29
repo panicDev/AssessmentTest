@@ -15,15 +15,18 @@
  */
 package id.panicdev.core.data.local
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import id.panicdev.core.data.local.entity.UserEntity
+import kotlinx.coroutines.flow.Flow
 
-@Database(
-    entities = [UserEntity::class],
-    version = 1,
-    exportSchema = false,
-)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
+@Dao
+interface UserDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertUsers(users: List<UserEntity>)
+
+    @Query("SELECT * FROM userentity WHERE login like :query || '%'")
+    fun getUsers(query: String?): Flow<List<UserEntity>>
 }

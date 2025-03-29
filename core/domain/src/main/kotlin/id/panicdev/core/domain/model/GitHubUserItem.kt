@@ -13,17 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package id.panicdev.core.data.local
+package id.panicdev.core.domain.model
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import id.panicdev.core.data.local.entity.UserEntity
-
-@Database(
-    entities = [UserEntity::class],
-    version = 1,
-    exportSchema = false,
+data class GitHubUserItem(
+    val avatar_url: String,
+    val events_url: String,
+    val followers_url: String,
+    val following_url: String,
+    val gists_url: String,
+    val gravatar_id: String,
+    val html_url: String,
+    val id: Long,
+    val login: String,
+    val node_id: String,
+    val organizations_url: String,
+    val received_events_url: String,
+    val repos_url: String,
+    val site_admin: Boolean,
+    val starred_url: String,
+    val subscriptions_url: String,
+    val type: String,
+    val url: String,
+    val user_view_type: String,
 )
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
-}

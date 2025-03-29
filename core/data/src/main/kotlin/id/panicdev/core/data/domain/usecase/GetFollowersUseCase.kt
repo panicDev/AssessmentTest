@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package id.panicdev.core.data.di
+package id.panicdev.core.data.domain.usecase
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import id.panicdev.core.data.domain.model.User
 import id.panicdev.core.data.domain.repository.UserRepository
-import id.panicdev.core.data.repository.UserRepositoryImpl
-import javax.inject.Singleton
+import timber.log.Timber
 
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
-
-    @Binds
-    @Singleton
-    internal abstract fun bindUserRepository(
-        userRepositoryImpl: UserRepositoryImpl,
-    ): UserRepository
+class GetFollowersUseCase(private val userRepository: UserRepository) {
+    suspend operator fun invoke(username: String?): Result<List<User>> {
+        return if (username.isNullOrEmpty()) {
+            Result.failure(Exception("Username is null or empty"))
+        } else {
+            val followers = userRepository.getFollowers(username = username)
+            Timber.d("GetFollowers use case invoked ${followers.size}")
+            Result.success(followers)
+        }
+    }
 }

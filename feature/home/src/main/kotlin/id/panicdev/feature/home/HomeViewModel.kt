@@ -15,60 +15,58 @@
  */
 package id.panicdev.feature.home
 
-import androidx.lifecycle.SavedStateHandle
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import id.panicdev.core.data.local.entity.RepositoryEntity
-import id.panicdev.core.data.repository.GithubRepository
-import kotlinx.coroutines.flow.Flow
+import id.panicdev.core.data.domain.model.User
+import id.panicdev.core.data.domain.usecase.GetUsersUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import timber.log.Timber
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
-    private val repository: GithubRepository,
+    private val getUsersUseCase: GetUsersUseCase,
 ) : ViewModel() {
+    private val _users = MutableStateFlow<List<User>?>(null)
+    var users = _users.asStateFlow()
 
-    companion object {
-        private const val QUERY_KEY = "QUERY_KEY"
-        private const val DEFAULT_QUERY = ""
+    var state by mutableStateOf(HomeState())
+        private set
+
+    private var currentJob: Job? = null
+
+    init {
+        getUsers()
     }
 
-    private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Idle)
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
-
-    val searchQuery = savedStateHandle.getStateFlow(QUERY_KEY, DEFAULT_QUERY)
-
-    fun onQueryChanged(query: String) {
-        savedStateHandle[QUERY_KEY] = query
-    }
-
-    fun onSearchQueryClick() {
-        try {
-            _uiState.update { HomeUiState.Loading }
-
-            val data = repository.getGitRepoSearchPagingSource(searchQuery.value)
-                .cachedIn(viewModelScope)
-
-            _uiState.update { HomeUiState.Success(data) }
-        } catch (e: Exception) {
-            Timber.e(e, "Error fetching git repository search results")
-            _uiState.value = HomeUiState.Error("Something went wrong!")
+    fun onEvent(event: HomeEvent) {
+        when (event) {
+            is HomeEvent.ChangeQuery -> {
+                state = state.copy(query = event.query)
+                getUsers()
+            }
+            HomeEvent.ClearQuery -> {
+                state = state.copy(query = "")
+                getUsers()
+            }
         }
     }
-}
 
-sealed class HomeUiState {
-    data object Idle : HomeUiState()
-    data object Loading : HomeUiState()
-    data class Success(val data: Flow<PagingData<RepositoryEntity>>) : HomeUiState()
-    data class Error(val message: String) : HomeUiState()
+    private fun getUsers() {
+        state = state.copy(isLoading = true)
+        currentJob?.cancel()
+        currentJob = viewModelScope.launch {
+            getUsersUseCase(query = state.query).collectLatest {
+                _users.value = it
+                state = state.copy(isLoading = false)
+            }
+        }
+    }
 }

@@ -15,6 +15,9 @@
  */
 package id.panicdev.core.ui.utils
 
+import android.annotation.SuppressLint
+
+@SuppressLint("DefaultLocale")
 fun formatCount(count: Int): String {
     return when {
         count < 1000 -> count.toString()

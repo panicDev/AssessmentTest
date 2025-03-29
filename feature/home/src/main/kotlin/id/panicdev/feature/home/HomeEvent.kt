@@ -13,17 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package id.panicdev.core.data.local
+package id.panicdev.feature.home
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import id.panicdev.core.data.local.entity.UserEntity
-
-@Database(
-    entities = [UserEntity::class],
-    version = 1,
-    exportSchema = false,
-)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
+sealed interface HomeEvent {
+    data class ChangeQuery(val query: String) : HomeEvent
+    data object ClearQuery : HomeEvent
 }

@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package id.panicdev.core.data.local
+package id.panicdev.core.data.domain.repository
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import id.panicdev.core.data.local.entity.UserEntity
+import id.panicdev.core.data.domain.model.Repository
+import id.panicdev.core.data.domain.model.User
+import kotlinx.coroutines.flow.Flow
 
-@Database(
-    entities = [UserEntity::class],
-    version = 1,
-    exportSchema = false,
-)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
+interface UserRepository {
+    suspend fun getUsers(query: String? = null): Flow<List<User>>
+    suspend fun getUser(username: String): User?
+    suspend fun getFollowers(username: String): List<User>
+    suspend fun getRepositories(username: String): List<Repository>
+    suspend fun insertUsers(users: List<User>)
 }

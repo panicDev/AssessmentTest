@@ -73,6 +73,9 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.navigation)
 
+    implementation(projects.feature.home)
+    implementation(projects.feature.detail)
+
     implementation(libs.androidx.core.splashscreen)
 
     testImplementation(libs.junit)

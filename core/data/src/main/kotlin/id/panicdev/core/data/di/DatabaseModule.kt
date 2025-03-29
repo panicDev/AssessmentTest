@@ -23,7 +23,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import id.panicdev.core.data.local.AppDatabase
-import id.panicdev.core.data.local.RepoDao
+import id.panicdev.core.data.local.UserDao
 import javax.inject.Singleton
 
 @Module
@@ -32,16 +32,20 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+    fun provideAppDatabase(
+        @ApplicationContext context: Context,
+    ): AppDatabase {
         return Room.databaseBuilder(
             context.applicationContext,
             AppDatabase::class.java,
-            "github_repository_database",
-        ).build()
+            "githubusers_db",
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides
-    fun provideRepoDao(appDatabase: AppDatabase): RepoDao {
-        return appDatabase.repoDao()
+    fun provideUserDao(appDatabase: AppDatabase): UserDao {
+        return appDatabase.userDao()
     }
 }

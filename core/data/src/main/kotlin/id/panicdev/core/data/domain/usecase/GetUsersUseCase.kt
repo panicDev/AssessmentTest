@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package id.panicdev.core.data.local
+package id.panicdev.core.data.domain.usecase
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import id.panicdev.core.data.local.entity.UserEntity
+import id.panicdev.core.data.domain.model.User
+import id.panicdev.core.data.domain.repository.UserRepository
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-@Database(
-    entities = [UserEntity::class],
-    version = 1,
-    exportSchema = false,
-)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
+class GetUsersUseCase @Inject constructor(
+    private val userRepository: UserRepository,
+) {
+    suspend operator fun invoke(query: String? = null): Flow<List<User>> {
+        return userRepository.getUsers(query = query)
+    }
 }

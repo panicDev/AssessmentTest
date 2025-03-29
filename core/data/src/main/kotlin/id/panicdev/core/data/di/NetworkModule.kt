@@ -24,6 +24,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import id.panicdev.core.data.BuildConfig
+import id.panicdev.core.data.domain.repository.UserRepository
+import id.panicdev.core.data.domain.usecase.GetFollowersUseCase
+import id.panicdev.core.data.domain.usecase.GetRepositoriesUseCase
+import id.panicdev.core.data.domain.usecase.GetUserUseCase
+import id.panicdev.core.data.domain.usecase.UserUseCases
 import id.panicdev.core.data.remote.api.GitHubApiService
 import kotlinx.serialization.json.Json
 import okhttp3.Cache
@@ -96,5 +101,17 @@ object NetworkModule {
             .addConverterFactory(converterFactory)
             .build()
             .create(GitHubApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserUseCases(
+        repository: UserRepository,
+    ): UserUseCases {
+        return UserUseCases(
+            getUserUseCase = GetUserUseCase(repository),
+            getFollowersUseCase = GetFollowersUseCase(repository),
+            getRepositoriesUseCase = GetRepositoriesUseCase(repository),
+        )
     }
 }

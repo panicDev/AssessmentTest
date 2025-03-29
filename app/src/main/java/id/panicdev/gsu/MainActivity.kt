@@ -15,6 +15,8 @@
  */
 package id.panicdev.gsu
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -22,9 +24,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
+import id.panicdev.core.ui.ext.checkForPermissions
 import id.panicdev.core.ui.theme.AppTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val permissions = mutableListOf<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -37,8 +45,16 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AppTheme {
-                MainNavigationGraph(navController = rememberNavController())
+                NavigationHost(navController = rememberNavController())
             }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        checkForPermissions(permissions) {
+            // Permissions granted
         }
     }
 }

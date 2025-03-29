@@ -1,7 +1,7 @@
 [versions]
 
 #project
-minSdk = "27"
+minSdk = "24"
 compileSdk = "35"
 targetSdk = "35"
 java = "17"

@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package id.panicdev.core.data.local
+package id.panicdev.core.data.remote.model
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import id.panicdev.core.data.local.entity.UserEntity
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@Database(
-    entities = [UserEntity::class],
-    version = 1,
-    exportSchema = false,
+@Serializable
+data class UserResponse(
+    val id: Int? = null,
+    @SerialName("login")
+    val username: String? = null,
+    @SerialName("avatar_url")
+    val avatarUrl: String? = null,
+    val name: String? = null,
 )
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
-}

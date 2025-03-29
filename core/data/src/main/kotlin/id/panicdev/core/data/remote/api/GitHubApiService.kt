@@ -15,42 +15,26 @@
  */
 package id.panicdev.core.data.remote.api
 
-import id.panicdev.core.data.remote.dto.ContributorDto
-import id.panicdev.core.data.remote.dto.RepoSearchResponseDto
-import id.panicdev.core.data.remote.dto.RepositoryDetailsDto
-import id.panicdev.core.data.remote.dto.RepositoryDto
+import id.panicdev.core.data.remote.model.ReposResponse
+import id.panicdev.core.data.remote.model.UserQueryResponse
+import id.panicdev.core.data.remote.model.UserResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GitHubApiService {
-    @GET("search/repositories")
-    suspend fun searchRepositories(
-        @Query("q") query: String,
-        @Query("page") page: Int,
-        @Query("per_page") perPage: Int,
-    ): RepoSearchResponseDto
+    @GET("users")
+    suspend fun getUsers(): List<UserResponse>
 
-    @GET("repos/{owner}/{repo}")
-    suspend fun getRepositoryDetails(
-        @Path("owner") owner: String,
-        @Path("repo") repo: String,
-        @Query("page") page: Long,
-        @Query("per_page") perPage: Long = 10,
-    ): RepositoryDetailsDto
+    @GET("search/users")
+    suspend fun getUsersBy(@Query("q") query: String): UserQueryResponse
 
-    @GET("repos/{owner}/{repo}/contributors")
-    suspend fun getContributors(
-        @Path("owner") owner: String,
-        @Path("repo") repo: String,
-        @Query("page") page: Long,
-        @Query("per_page") perPage: Long = 10,
-    ): List<ContributorDto>
+    @GET("users/{username}")
+    suspend fun getUser(@Path("username") username: String): UserResponse?
+
+    @GET("users/{username}/followers")
+    suspend fun getFollowers(@Path("username") username: String): List<UserResponse>
 
     @GET("users/{username}/repos")
-    suspend fun getUserRepositories(
-        @Path("username") username: String,
-        @Query("page") page: Long,
-        @Query("per_page") perPage: Long = 10,
-    ): List<RepositoryDto>
+    suspend fun getRepos(@Path("username") username: String): List<ReposResponse>
 }
