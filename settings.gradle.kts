@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -19,5 +20,28 @@ dependencyResolutionManagement {
     }
 }
 
+plugins {
+    id("com.gradle.develocity") version ("3.19.2")
+}
+
+develocity {
+    buildScan {
+        publishing.onlyIf { !System.getenv("CI").isNullOrEmpty() }
+        termsOfUseUrl.set("https://gradle.com/help/legal-terms-of-use")
+        termsOfUseAgree.set("yes")
+    }
+}
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "GithubSearchUser"
 include(":app")
+
+
+check(JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+    """
+    Jetpack requires JDK 17+ but it is currently using JDK ${JavaVersion.current()}.
+    Java Home: [${System.getProperty("java.home")}]
+    https://developer.android.com/build/jdks#jdk-config-in-studio
+    """.trimIndent()
+}
